@@ -1,2 +1,2 @@
 # vlibras-deploy
-Chart to deploy vLibras using Kubernetes Helm
+Chart to deploy PloneGovBR using Kubernetes Helm
