@@ -27,7 +27,7 @@ spec:
           imagePullPolicy: {{ .Values.plone.instance.pullPolicy }}
           env:
             - name: ZEO_ADDRESS
-              value: "{{ template "plone.zeoserver.fullname" . }}:{{ .Values.plone.zeoserver.port }}"
+              value: "{{ template "plone.zeoserver.fullname" . }}:{{ .Values.plone.zeoserver.httpPort }}"
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
