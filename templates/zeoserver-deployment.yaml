@@ -23,16 +23,17 @@ spec:
     spec:
       imagePullSecrets:
         - name: registrymp
-      command: [ 'zeo']
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.plone.zeoserver.image }}:{{ .Values.plone.zeoserver.tag }}"
-          imagePullPolicy: {{ .Values.plone.zeoserver.pullPolicy }}
-          resources:
+      - args:
+        - zeo
+        name: {{ .Chart.Name }}
+        image: "{{ .Values.plone.zeoserver.image }}:{{ .Values.plone.zeoserver.tag }}"
+        imagePullPolicy: {{ .Values.plone.zeoserver.pullPolicy }}
+        resources:
 {{ toYaml .Values.resources | indent 12 }}
-          volumeMounts:
-          - name: zeoserver-data
-            mountPath: /data
+        volumeMounts:
+        - name: zeoserver-data
+          mountPath: /data
       volumes:
         - name: zeoserver-data
         {{- if .Values.persistence.enabled }}
