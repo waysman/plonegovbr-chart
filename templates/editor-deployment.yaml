@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "plone.editor.fullname" . }}
+  labels:
+    app: {{ template "plone.editor.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.plone.editor.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "plone.editor.fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        selector: {{ .Values.plone.slot }}
+      annotations: 
+    spec:
+      imagePullSecrets:
+        - name: registrymp
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.plone.editor.image }}:{{ .Values.plone.editor.tag }}"
+          imagePullPolicy: {{ .Values.plone.editor.pullPolicy }}
+          env:
+            - name: ZEO_ADDRESS
+              value: "{{ template "plone.zeoserver.fullname" . }}:{{ .Values.plone.zeoserver.port }}"
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

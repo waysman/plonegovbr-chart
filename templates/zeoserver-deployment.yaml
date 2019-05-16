@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "plone.zeoserver.fullname" . }}
+  labels:
+    app: {{ template "plone.zeoserver.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    type: deployment
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.plone.zeoserver.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "plone.zeoserver.fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        type: deployment
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        slot: {{ .Values.global.slot }} 
+      annotations: 
+    spec:
+      imagePullSecrets:
+        - name: registrymp
+      command: [ 'zeo']
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.plone.zeoserver.image }}:{{ .Values.plone.zeoserver.tag }}"
+          imagePullPolicy: {{ .Values.plone.zeoserver.pullPolicy }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+          - name: zeoserver-data
+            mountPath: /data
+      volumes:
+        - name: zeoserver-data
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ if .Values.persistence.zeoserver.existingClaim }}{{ .Values.persistence.zeoserver.existingClaim }}{{- else }}{{ template "plone.zeoserver.fullname" . }}-data{{- end }}
+        {{- else }}
+          emptyDir: {}
+      {{- end -}}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+
+
+  
+{{- end }}
+

@@ -1,0 +1,29 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+{{- if .Values.ingress.annotations }}
+  annotations:
+{{ toYaml .Values.ingress.annotations | indent 4 }}
+{{- end }}
+  name: {{ template "plone.release.name" . }}-ingresser
+  labels:
+    app: {{ template "plone.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  rules:
+  - host: {{ .Values.ingress.dicionario.url | quote }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{ template "plone.instance.fullname" . }}
+          servicePort: {{ .Values.plone.instance.httpPort }}
+
+{{- if .Values.ingress.tls }}
+  tls:
+{{ toYaml .Values.ingress.tls | indent 4 }}
+{{- end -}}
+{{- end }}

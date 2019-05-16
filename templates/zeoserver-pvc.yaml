@@ -1,0 +1,27 @@
+{{- if and .Values.persistence.enabled (not .Values.persistence.zeoserver.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "plone.zeoserver.fullname" . }}-data
+  labels:
+    app: {{ template "plone.zeoserver.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  {{- if .Values.persistence.zeoserver.hostPath }}
+  storageClassName: ""
+  {{- end }}
+  accessModes:
+    - {{ .Values.persistence.zeoserver.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.zeoserver.size | quote }}
+{{- if and .Values.persistence.zeoserver.storageClass (not .Values.persistence.zeoserver.hostPath) -}}
+{{- if (eq "-" .Values.persistence.zeoserver.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.persistence.zeoserver.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end -}}
