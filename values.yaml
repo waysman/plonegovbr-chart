@@ -22,11 +22,11 @@ plone:
 
     ## Specify an imagePullPolicy
     ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
 
     httpPort: 8080
 
-    replicas: 3
+    replicas: 1
     
     resources: {}
       # We usually recommend not to specify default resources and to leave this as a conscious
@@ -49,11 +49,11 @@ plone:
 
     ## Specify an imagePullPolicy
     ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
 
     httpPort: 8080
 
-    replicas: 5
+    replicas: 1
     
     resources: {}
       # We usually recommend not to specify default resources and to leave this as a conscious
@@ -76,7 +76,7 @@ plone:
 
     ## Specify an imagePullPolicy
     ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
 
     ## The port which of the application
     httpPort: 8080
@@ -98,23 +98,15 @@ plone:
 
 ## Ingress configuration options
 ###
-ingress:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  enabled: false
-  tls:
-    # - secretName: vlibras-local-tls
-    # hosts:
-    #   - vlibras.economia.local
-  dicionario:
-    url: plone.economia.gov.br
+gateway:
+  domain: plonebr.nuvem.gov.br
+  url: justica
 
 ## Enable liveness and readiness probes
 probesEnabled: true
 
 persistence:
-  enabled: false
+  enabled: enable
   ## A manually managed Persistent Volume and Claim
   zeoserver:
     ## drupal data Persistent Volume Storage Class

@@ -25,6 +25,8 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.plone.instance.image }}:{{ .Values.plone.instance.tag }}"
           imagePullPolicy: {{ .Values.plone.instance.pullPolicy }}
+          ports:
+          - containerPort: 8080
           env:
             - name: ZEO_ADDRESS
               value: "{{ template "plone.zeoserver.fullname" . }}:{{ .Values.plone.zeoserver.httpPort }}"

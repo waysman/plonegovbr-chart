@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ template "plone.instance.fullname" . }}-gateway
+spec:
+  hosts:
+  - {{ .Values.gateway.domain }}
+  gateways:
+  - public-gateway.istio-system.svc.cluster.local
+  http:
+  - match:
+    - uri:
+        prefix: /{{ .Values.gateway.url }}/admin
+    rewrite:
+      uri: /VirtualHostBase/https/{{ .Values.gateway.domain }}:443/Plone/VirtualHostRoot/_vh_{{ .Values.gateway.url }}/
+    route:
+    - destination:
+        host: {{ template "plone.editor.fullname" . }}
+  - match:
+    - uri:
+        prefix: /{{ .Values.gateway.url }}
+    rewrite:
+      uri: /VirtualHostBase/https/{{ .Values.gateway.domain }}:443/Plone/VirtualHostRoot/_vh_{{ .Values.gateway.url }}/
+    route:
+    - destination:
+        host: {{ template "plone.instance.fullname" . }}

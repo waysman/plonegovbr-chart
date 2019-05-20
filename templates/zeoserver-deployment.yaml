@@ -29,6 +29,8 @@ spec:
         name: {{ .Chart.Name }}
         image: "{{ .Values.plone.zeoserver.image }}:{{ .Values.plone.zeoserver.tag }}"
         imagePullPolicy: {{ .Values.plone.zeoserver.pullPolicy }}
+        ports:
+        - containerPort: 8080
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         volumeMounts:
