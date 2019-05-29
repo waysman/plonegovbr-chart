@@ -1,0 +1,23 @@
+{{- if and .Values.plone.nustercache.autoscaleEnabled .Values.plone.nustercache.autoscaleMin .Values.plone.nustercache.autoscaleMax }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "plone.nustercache.fullname" . }}-autoscale
+  labels:
+    app: {{ template "plone.nustercache.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  maxReplicas: {{ .Values.plone.nustercache.autoscaleMax }}
+  minReplicas: {{ .Values.plone.nustercache.autoscaleMin }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ template "plone.nustercache.fullname" . }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.plone.nustercache.cpu.targetAverageUtilization }}
+{{- end }}

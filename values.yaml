@@ -26,7 +26,7 @@ plone:
 
     httpPort: 8080
 
-    replicas: 1
+    replicas: 3
     
     resources: {}
       # We usually recommend not to specify default resources and to leave this as a conscious
@@ -53,23 +53,25 @@ plone:
 
     httpPort: 8080
 
-    replicas: 1
+    autoscaleEnabled: true
+    autoscaleMin: 1
+    autoscaleMax: 5
+
+    # replicas: 1
     
-    resources: {}
-      # We usually recommend not to specify default resources and to leave this as a conscious
-      # choice for the user. This also increases chances charts run on environments with little
-      # resources, such as Minikube. If you do want to specify resources, uncomment the following
-      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-      # limits:
-      #  cpu: 100m
-      #  memory: 128Mi
-      # requests:
-      #  cpu: 100m
-      #  memory: 128Mi
+    resources:
+      limits:
+       cpu: 500m
+       memory: 1024Mi
+      requests:
+       cpu: 800m
+       memory: 2048Mi
+    cpu:
+      targetAverageUtilization: 80
 
   zeoserver:
     ## The repository and image
-    image: fabionitto/plonegovbr
+    image: lmatos/plonebr-zeo
 
     ## The tag for the image
     tag: latest
@@ -80,7 +82,7 @@ plone:
 
     ## The port which of the application
     httpPort: 8080
-
+  
     replicas: 1
     
     resources: {}
@@ -95,12 +97,43 @@ plone:
       #  cpu: 100m
       #  memory: 128Mi
 
+  nustercache:
+    ## The repository and image
+    image: nuster/nuster
+
+    ## The tag for the image
+    tag: 2.0.10.18
+
+    ## Specify an imagePullPolicy
+    ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+    pullPolicy: "Always"
+
+    ## The port which of the application
+    httpPort: 8080
+
+    autoscaleEnabled: true
+    autoscaleMin: 1
+    autoscaleMax: 5
+
+    # replicas: 1
+    
+    resources:
+      limits:
+       cpu: 500m
+       memory: 1024Mi
+      requests:
+       cpu: 800m
+       memory: 2048Mi
+    cpu:
+      targetAverageUtilization: 80
+
+
 
 ## Ingress configuration options
 ###
 gateway:
-  domain: plonebr.nuvem.gov.br
-  url: justica
+  domain: govbr.sgd.local
+  url: govbr
 
 ## Enable liveness and readiness probes
 probesEnabled: true
@@ -142,16 +175,6 @@ service:
 httpPort: 80
 
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
 
 ## Node labels for pod assignment
 ## Ref: https://kubernetes.io/docs/user-guide/node-selection/

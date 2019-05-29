@@ -1,0 +1,23 @@
+{{- if and .Values.plone.instance.autoscaleEnabled .Values.plone.instance.autoscaleMin .Values.plone.instance.autoscaleMax }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "plone.instance.fullname" . }}-autoscale
+  labels:
+    app: {{ template "plone.instance.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  maxReplicas: {{ .Values.plone.instance.autoscaleMax }}
+  minReplicas: {{ .Values.plone.instance.autoscaleMin }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ template "plone.instance.fullname" . }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.plone.instance.cpu.targetAverageUtilization }}
+{{- end }}

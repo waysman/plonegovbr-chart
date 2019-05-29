@@ -12,7 +12,7 @@ spec:
     - uri:
         prefix: /{{ .Values.gateway.url }}/admin
     rewrite:
-      uri: /VirtualHostBase/https/{{ .Values.gateway.domain }}:443/Plone/VirtualHostRoot/_vh_{{ .Values.gateway.url }}/
+      uri: /VirtualHostBase/https/{{ .Values.gateway.domain }}:443/VirtualHostRoot/_vh_{{ .Values.gateway.url }}/
     route:
     - destination:
         host: {{ template "plone.editor.fullname" . }}
@@ -23,4 +23,4 @@ spec:
       uri: /VirtualHostBase/https/{{ .Values.gateway.domain }}:443/Plone/VirtualHostRoot/_vh_{{ .Values.gateway.url }}/
     route:
     - destination:
-        host: {{ template "plone.instance.fullname" . }}
+        host: {{ template "plone.nustercache.fullname" . }}

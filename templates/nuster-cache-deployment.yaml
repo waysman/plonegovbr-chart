@@ -1,0 +1,78 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "plone.nustercache.fullname" . }}
+  labels:
+    app: {{ template "plone.nustercache.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    type: deployment
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.plone.nustercache.replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "plone.nustercache.fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        type: deployment
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        slot: {{ .Values.global.slot }} 
+      annotations: 
+    spec:
+      imagePullSecrets:
+        - name: registrymp
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.plone.nustercache.image }}:{{ .Values.plone.nustercache.tag }}"
+        imagePullPolicy: {{ .Values.plone.nustercache.pullPolicy }}
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 10
+        readinessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 2
+          timeoutSeconds: 10
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        volumeMounts:
+        - name: config-volume-{{ template "plone.nustercache.fullname" . }}
+          mountPath: /etc/nuster/
+      volumes:
+      - configMap:
+          name: {{ template "plone.nustercache.fullname" . }}-configmap
+          defaultMode: 256
+          optional: false
+        name: config-volume-{{ template "plone.nustercache.fullname" . }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+
+
+  
+{{- end }}
+

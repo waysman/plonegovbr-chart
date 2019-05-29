@@ -1,18 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "plone.zeoserver.fullname" . }}
+  name: {{ template "plone.nustercache.fullname" . }}
   labels:
-    app: {{ template "plone.zeoserver.fullname" . }}
+    app: {{ template "plone.nustercache.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
   type: {{ .Values.service.type }}
   ports:
-  - name: tcp
+  - name: http
     port: 8080
     targetPort: 8080
     protocol: TCP
   selector:
-    app: {{ template "plone.zeoserver.fullname" . }}
+    app: {{ template "plone.nustercache.fullname" . }}
